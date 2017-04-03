@@ -31,3 +31,4 @@ Pass a callback function as second parameter which will be executed with the ent
 - [ ] JSON RPC support
 - [ ] Plugins for working with Ajax & JSON
 - [ ] Data streaming support from remote terminals using websockets
+- [ ] support for touch devices
