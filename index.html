@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>CONSOLE</title>
+		<!-- terminal.js -->
+		<script src="terminal.js"></script>
+		<!-- terminal.css -->
+		<link rel="stylesheet" href="terminal.css"/>
+		<script>
+			window.onload=function() {
+				new terminal("term",function(cmd) {
+					// display what is entered
+					return "You typed "+cmd;
+				});
+				// Execute javascript code
+				new terminal("term2");
+				// Create terminal with 100% width and 100% height and add to the body
+				new terminal("term3");
+			};
+		</script>
+	</head>
+	<body>
+		<div id="term"  class="terminal"></div>
+		<div id="term2" style='width:500px;height:500px' class="terminal"></div>
+	</body>
+</html>
