@@ -1,0 +1,51 @@
+.terminal,.terminal textarea {
+	background-color:black;
+	color:white;
+}
+.terminal {
+	width:100%;
+	height:100%;
+	margin:0px;
+	top:0;
+	left:0;
+	overflow:auto;
+}
+textarea {
+	border:0px;
+	width:0;
+	height:0;
+	resize:none;
+	opacity:0;
+}
+textarea:focus {
+	outline:none;
+}
+.blink_cursor {
+	width:10px;
+	height:20px;
+	display:inline-block;
+}
+.blink_cursor.blink {
+	animation:blink 1s ease infinite;				
+}
+@keyframes blink {
+	0% {
+		background-color:white;
+	}
+	50% {
+		background-color:black;
+	}
+	100% {
+		background-color:white;
+	}
+}
+.col {
+	display:block;
+	line-height:1.5;
+}
+.col::before {
+	content:'>';
+}
+.col.op::before {
+	content:'';
+}
