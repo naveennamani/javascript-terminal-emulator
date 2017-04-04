@@ -3,7 +3,9 @@ var isfn=function(a) {
 };
 function terminal(id,cb,s) {
 	if(terminal.loaded!==true) terminal.load();
-	this.focused=false;
+	this.focused=false,this.paused=false;
+	var self=this;
+	var dkd;
 	var h={ip:[],i:undefined,t:false,d:0},ta=document.createElement("textarea"),dc=document.createElement("div"),t;
 	if(id instanceof HTMLElement) t=id;
 	else if((t=document.getElementById(id))==undefined) {
@@ -21,34 +23,60 @@ function terminal(id,cb,s) {
 		if(terminal.active!==null&&terminal.active.focused==true) terminal.active.blur();
 		this.focused=true;
 		t.getElementsByClassName("blink_cursor")[0].classList.add("blink");	
-		ta.focus();
+		if(this.paused===false) this.start();
 		terminal.active=this;
 	};
 	this.blur=function() {
 		this.focused=false;
 		t.getElementsByClassName("blink_cursor")[0].classList.remove("blink");
 	};
+	this.pause=function() {
+		this.paused=true;
+	};
+	this.start=function() {
+		ta.value='';
+		ta.focus();
+		this.paused=false;
+	};
 	ta.oninput=function(e) {
-		adjustcursor();
-		t.scrollTop=t.scrollHeight-t.offsetHeight;
+		console.log(self.paused);
+		if(self.paused===false) {
+			adjustcursor();
+			t.scrollTop=t.scrollHeight-t.offsetHeight;
+		} else console.log('paused');
 	};
 	ta.onkeypress=function(e) {
-		if((e.key=='Enter'||e.which==13)&&e.shiftKey===false)
-			adjustcols();
+		if(self.paused===false) {
+			if((e.key=='Enter'||e.which==13)&&e.shiftKey===false)
+				adjustcols();
+		}
 	};
 	ta.onkeydown=function(e) {
-		if(e.key.match(/Arrow[Left,Right]/g))
-			adjustcursor();
-		if(e.key.match(/Arrow[Up,Down]/g))
-			adjusthistory(e.key);
+		if(self.paused===false) {
+			if(e.key.match(/Arrow[Left,Right]/g))
+				adjustcursor();
+			if(e.key.match(/Arrow[Up,Down]/g))
+				adjusthistory(e.key);
+		}
 	};
-	var adjustcols=function() {
+	var adjustcols=(function() {
 		var ft=ta.value.replace(/^\n/,'');
 		dc.getElementsByClassName("active")[0].innerHTML=ft.replace(/\n/g,'<br>');
 		dc.getElementsByClassName("active")[0].classList.toggle("active");
 		var r,e=false;
 		try {
-			r=(!isfn(cb))?window.eval(ft):cb(ft);
+			if(isfn(cb)) r=cb(ft);
+			else if(typeof cb==='object') {
+				var args=ft.replace(/\n/g,' ').split(' ');
+				if(cb.hasOwnProperty(args[0])) {
+					console.log(this);
+					if(isfn(cb[args[0]])) r=cb[args[0]].apply(this,(args.shift(),format(args)));
+					else r=cb[args[0]];
+				} else {
+					r='Unknown command';
+				}
+			} else
+				r=window.eval(ft);
 		} catch(err) {
 			e=true;
 			r=err.toString();
@@ -62,8 +90,8 @@ function terminal(id,cb,s) {
 		}
 		h.ip.includes(ta.value)?h.ip:h.ip.push(ta.value);
 		ta.value='';
-		ta.oninput();
-	};
+		//ta.oninput();
+	}).bind(this);
 	var adjustcursor=function() {
 		var ss=ta.selectionStart,se=ta.selectionEnd;
 		if(ss===se) {
@@ -81,8 +109,23 @@ function terminal(id,cb,s) {
 		h.i=h.i<0?0:h.i>=h.ip.length?h.ip.length-1:h.i;
 		ta.oninput();
 	};
+	var format=function(a) {
+		var b=[];
+		for(var i=0;i<a.length;i++) {
+			var c=a[i];
+			if(!isNaN(c)) b[i]=Number(c);
+			else {
+				try {
+					b[i]=JSON.parse(c);
+				} catch(e) {
+					b[i]=c;
+				}
+			}
+		}
+		return b;
+	};
+	// Parsing the options passed to style the terminal
 	if(s!==undefined) {
-		Object.assign(t.style,s);
 	}
 }
 terminal.active=null;
