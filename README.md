@@ -27,7 +27,8 @@ Pass a callback function as second parameter which will be executed with the ent
 
 ## Todo
 
-- [ ] User defined commands execution
+- [x] User defined commands execution
+- [ ] Support for different options to style the terminal
 - [ ] JSON RPC support
 - [ ] Plugins for working with Ajax & JSON
 - [ ] Data streaming support from remote terminals using websockets
