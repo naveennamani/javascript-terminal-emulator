@@ -7,13 +7,30 @@
 		<link rel="stylesheet" href="terminal.css"/>
 		<script>
 			window.onload=function() {
-				new terminal("term",function(cmd) {
-					// display what is entered
+				// Create and autofocus
+				(new terminal("term",function(cmd) {
+					// Return what you type
 					return "You typed "+cmd;
+				})).focus();
+				// Create the terminal that executes userdefined commands
+				new terminal("term2",{
+					add:function(a,b) {
+						// this refers to the terminal object created on 'term2' div
+						// pause() method for not allowing users to enter further commands
+						this.pause();
+						// start() method for allowing users to enter commands
+						this.start();
+						return a+b;
+					},
+					sub:function(a,b) {
+						return a-b;
+					},
+					mul:function(a,b) {
+						return a*b;
+					}
 				});
-				// Execute javascript code
-				new terminal("term2");
 				// Create terminal with 100% width and 100% height and add to the body
+				// and executes the javascript code as in console
 				new terminal("term3");
 			};
 		</script>
