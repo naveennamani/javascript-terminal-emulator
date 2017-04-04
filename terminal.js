@@ -34,7 +34,6 @@ function terminal(id,cb,s) {
 		this.paused=true;
 	};
 	this.start=function() {
-		ta.value='';
 		ta.focus();
 		this.paused=false;
 	};
